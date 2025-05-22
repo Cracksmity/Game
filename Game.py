@@ -58,6 +58,13 @@ fuente = pygame.font.Font("freesansbold.ttf", 32)
 texto_x = 10
 texto_y = 10
 
+# Texto final del juego
+fuenteFinal = pygame.font.Font("freesansbold.ttf", 64)
+
+def textoFinal():
+    textoFinal = fuenteFinal.render("GAME OVER", True, (255, 255, 255))
+    pantalla.blit(textoFinal, (200, 250))
+
 # Funcion mostrar puntaje
 def mostrar_puntaje(x, y):
     texto = fuente.render("Puntaje: " + str(puntaje_jugador), True, (255, 255, 255))
@@ -134,6 +141,14 @@ while ejecutar:
 
     # Movimiento del enemigo
     for i in range(cantidad_enemigos):
+
+        # Finalizar el juego
+        if enemigo_y[i] > 535:
+            for k in range(cantidad_enemigos):
+                enemigo_y[k] = 1000
+            textoFinal()
+            break
+
         enemigo_x[i] += enemigo_x_cambio[i]
 
     # Borde Enemigo
