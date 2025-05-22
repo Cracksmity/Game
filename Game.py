@@ -52,6 +52,11 @@ fuente = pygame.font.Font("freesansbold.ttf", 32)
 texto_x = 10
 texto_y = 10
 
+# Funcion mostrar puntaje
+def mostrar_puntaje(x, y):
+    texto = fuente.render("Puntaje: " + str(puntaje_jugador), True, (255, 255, 255))
+    pantalla.blit(texto, (x, y))
+
 # Funcion para dibujar el jugador
 def jugador(x, y):
     pantalla.blit(img_jugador, (x, y))
@@ -154,6 +159,7 @@ while ejecutar:
 
     jugador(jugador_x, jugador_y)
 
+    mostrar_puntaje(texto_x, texto_y)
 
     # Actualizar la pantalla
     pygame.display.update()
