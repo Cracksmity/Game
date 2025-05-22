@@ -2,6 +2,7 @@ import pygame
 import random
 import math
 from pygame import mixer
+import io
 
 # Inicializador
 pygame.init()
@@ -45,11 +46,12 @@ for i in range(cantidad_enemigos):
     enemigo_y_cambio.append(30)
 
 # Municion
+municiones = []
 img_municion = pygame.image.load("bala.png")
 bala_x = 0
 bala_y = 536
 bala_x_cambio = 0
-bala_y_cambio = .2
+bala_y_cambio = 1
 bala_visible = False
 
 # Puntaje
@@ -116,12 +118,12 @@ while ejecutar:
                 jugador_x_cambio += .25
             if event.key == pygame.K_SPACE:
                 sonido_municion = mixer.Sound("disparo.mp3")
-                if not bala_visible:
-                    sonido_municion.play()
-                    bala_x = jugador_x + (img_jugador.get_width() // 2) - (
-                                img_municion.get_width() // 2)  # Centra la bala horizontalmente
-                    bala_y = jugador_y  # La bala aparecerá desde la nave
-                    bala_visible = True
+                nueva_bala = {
+                    "x": jugador_x,
+                    "y": jugador_y,
+                    "velocidad": -.5
+                }
+                municiones.append(nueva_bala)
 
         # Soltar teclas
         if event.type == pygame.KEYUP:
@@ -160,27 +162,25 @@ while ejecutar:
             enemigo_y[i] += enemigo_y_cambio[i]
 
         # Colision
-        colision = colisiones(enemigo_x[i], enemigo_y[i], bala_x, bala_y)
-        if colision:
-            sonido_colision = mixer.Sound("Golpe.mp3")
-            sonido_colision.play()
-            bala_y = jugador_y
-            bala_visible = False
-            puntaje_jugador += 1
-            enemigo_x[i] = random.randint(0, 758)
-            enemigo_y[i] = random.randint(50, 200)
+        for bala in municiones:
+            colision = colisiones(enemigo_x[i], enemigo_y[i], bala["x"], bala["y"])
+            if colision:
+                sonido_colision = mixer.Sound("Golpe.mp3")
+                sonido_colision.play()
+                bala_y = jugador_y
+                bala_visible = False
+                puntaje_jugador += 1
+                enemigo_x[i] = random.randint(0, 758)
+                enemigo_y[i] = random.randint(50, 200)
 
         enemigo(enemigo_x[i], enemigo_y[i], i)
 
     # Movimiento de la municion
-    if bala_visible:
-        bala_y -= bala_y_cambio
-        if bala_y <= 0:  # Si la bala llega al tope de la pantalla
-            bala_visible = False  # La bala deja de ser visible
-            bala_y = jugador_y  # Reset de la posición Y de la bala
-            bala_x = jugador_x  # Reset de la posición X de la bala
-        else:
-            disparar_municion(bala_x, bala_y)
+    for bala in municiones:
+        bala["y"] += bala["velocidad"]
+        pantalla.blit(img_municion, (bala["x"] + 16, bala["y"] + 10))
+        if bala["y"] < 0:
+            municiones.remove(bala)
 
     jugador(jugador_x, jugador_y)
 
