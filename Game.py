@@ -1,6 +1,7 @@
 import pygame
 import random
 import math
+from pygame import mixer
 
 # Inicializador
 pygame.init()
@@ -13,6 +14,11 @@ pygame.display.set_caption("Invasion Espacial")
 icono = pygame.image.load("ovni.png")
 pygame.display.set_icon(icono)
 fondo = pygame.image.load("fondo.jpg")
+
+# Agregar musica
+mixer.music.load("MusicaFondo.mp3")
+mixer.music.set_volume(0.2)
+mixer.music.play(-1)
 
 # Jugador
 
@@ -102,7 +108,9 @@ while ejecutar:
             if event.key == pygame.K_RIGHT:
                 jugador_x_cambio += .25
             if event.key == pygame.K_SPACE:
+                sonido_municion = mixer.Sound("disparo.mp3")
                 if not bala_visible:
+                    sonido_municion.play()
                     bala_x = jugador_x + (img_jugador.get_width() // 2) - (
                                 img_municion.get_width() // 2)  # Centra la bala horizontalmente
                     bala_y = jugador_y  # La bala aparecerá desde la nave
@@ -139,6 +147,8 @@ while ejecutar:
         # Colision
         colision = colisiones(enemigo_x[i], enemigo_y[i], bala_x, bala_y)
         if colision:
+            sonido_colision = mixer.Sound("Golpe.mp3")
+            sonido_colision.play()
             bala_y = jugador_y
             bala_visible = False
             puntaje_jugador += 1
