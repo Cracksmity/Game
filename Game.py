@@ -24,11 +24,19 @@ jugador_y_cambio = 0
 
 # Enemigo
 
-img_enemigo = pygame.image.load("ovni.png")
-enemigo_x = random.randint(0, 758)
-enemigo_y = random.randint(50, 200)
-enemigo_x_cambio = 0.3
-enemigo_y_cambio = 30
+img_enemigo = []
+enemigo_x = []
+enemigo_y = []
+enemigo_x_cambio = []
+enemigo_y_cambio = []
+cantidad_enemigos = 6
+
+for i in range(cantidad_enemigos):
+    img_enemigo.append(pygame.image.load("ovni.png"))
+    enemigo_x.append(random.randint(0, 758))
+    enemigo_y.append(random.randint(50, 200))
+    enemigo_x_cambio.append(0.3)
+    enemigo_y_cambio.append(30)
 
 # Municion
 img_municion = pygame.image.load("bala.png")
@@ -40,14 +48,17 @@ bala_visible = False
 
 # Puntaje
 puntaje_jugador = 0
+fuente = pygame.font.Font("freesansbold.ttf", 32)
+texto_x = 10
+texto_y = 10
 
 # Funcion para dibujar el jugador
 def jugador(x, y):
     pantalla.blit(img_jugador, (x, y))
 
 # Funcion para dibujar el enemigo
-def enemigo(x, y):
-    pantalla.blit(img_enemigo, (x, y))
+def enemigo(x, y, ene):
+    pantalla.blit(img_enemigo[ene], (x, y))
 
 # Funcion para disparar la municion
 def disparar_municion(x, y):
@@ -108,16 +119,28 @@ while ejecutar:
     if jugador_x >= 758:
         jugador_x = 758
 
-        # Movimiento del enemigo
-    enemigo_x += enemigo_x_cambio
+    # Movimiento del enemigo
+    for i in range(cantidad_enemigos):
+        enemigo_x[i] += enemigo_x_cambio[i]
 
     # Borde Enemigo
-    if enemigo_x <= 0:
-        enemigo_x_cambio = 0.1
-        enemigo_y += enemigo_y_cambio
-    elif enemigo_x >= 758:
-        enemigo_x_cambio = -0.1
-        enemigo_y += enemigo_y_cambio
+        if enemigo_x[i] <= 0:
+            enemigo_x_cambio[i] = 0.1
+            enemigo_y[i] += enemigo_y_cambio[i]
+        elif enemigo_x[i] >= 758:
+            enemigo_x_cambio[i] = -0.1
+            enemigo_y[i] += enemigo_y_cambio[i]
+
+        # Colision
+        colision = colisiones(enemigo_x[i], enemigo_y[i], bala_x, bala_y)
+        if colision:
+            bala_y = jugador_y
+            bala_visible = False
+            puntaje_jugador += 1
+            enemigo_x[i] = random.randint(0, 758)
+            enemigo_y[i] = random.randint(50, 200)
+
+        enemigo(enemigo_x[i], enemigo_y[i], i)
 
     # Movimiento de la municion
     if bala_visible:
@@ -129,18 +152,7 @@ while ejecutar:
         else:
             disparar_municion(bala_x, bala_y)
 
-    # Colision
-    colision = colisiones(enemigo_x, enemigo_y, bala_x, bala_y)
-    if colision:
-        bala_y = jugador_y
-        bala_visible = False
-        puntaje_jugador += 1
-        print(puntaje_jugador)
-        enemigo_x = random.randint(0, 758)
-        enemigo_y = random.randint(50, 200)
-
     jugador(jugador_x, jugador_y)
-    enemigo(enemigo_x, enemigo_y)
 
 
     # Actualizar la pantalla
