@@ -1,4 +1,5 @@
 import pygame
+import random
 
 # Inicializador
 pygame.init()
@@ -10,24 +11,38 @@ pantalla = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("Invasion Espacial")
 icono = pygame.image.load("ovni.png")
 pygame.display.set_icon(icono)
+fondo = pygame.image.load("fondo.jpg")
 
 # Jugador
 
 img_jugador = pygame.image.load("nave.png")
-jugador_x = 330
-jugador_y = 450
+jugador_x = 400
+jugador_y = 536
 jugador_x_cambio = 0
 jugador_y_cambio = 0
 
+# Enemigo
+
+img_enemigo = pygame.image.load("ovni.png")
+enemigo_x = random.randint(0, 758)
+enemigo_y = random.randint(50, 200)
+enemigo_x_cambio = 0.3
+enemigo_y_cambio = 30
+
+# Funcion para dibujar el jugador
 def jugador(x, y):
     pantalla.blit(img_jugador, (x, y))
+
+# Funcion para dibujar el enemigo
+def enemigo(x, y):
+    pantalla.blit(img_enemigo, (x, y))
 
 # Bucle principal
 ejecutar = True
 while ejecutar:
 
-    # RGB
-    pantalla.fill((205, 144, 228))
+    # Imagen
+    pantalla.blit(fondo, (0, 0))
 
 
     # Eventos
@@ -54,13 +69,25 @@ while ejecutar:
     # Movimiento del jugador
     jugador_x += jugador_x_cambio
 
-    # Bordes
+    # Borde Jugador
     if jugador_x <= 0:
         jugador_x = 0
-    if jugador_x >= 640:
-        jugador_x = 640
+    if jugador_x >= 758:
+        jugador_x = 758
+
+        # Movimiento del enemigo
+    enemigo_x += enemigo_x_cambio
+
+    # Borde Enemigo
+    if enemigo_x <= 0:
+        enemigo_x_cambio = 0.1
+        enemigo_y += enemigo_y_cambio
+    elif enemigo_x >= 758:
+        enemigo_x_cambio = -0.1
+        enemigo_y += enemigo_y_cambio
 
     jugador(jugador_x, jugador_y)
+    enemigo(enemigo_x, enemigo_y)
 
 
     # Actualizar la pantalla
