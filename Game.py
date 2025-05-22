@@ -54,14 +54,20 @@ bala_x_cambio = 0
 bala_y_cambio = 1
 bala_visible = False
 
+def fuente_bytes(fuente):
+    with open(fuente, "rb") as f:
+        ttf_bytes = f.read()
+    return io.BytesIO(ttf_bytes)
+
 # Puntaje
 puntaje_jugador = 0
-fuente = pygame.font.Font("freesansbold.ttf", 32)
+fontAsBytes = fuente_bytes("FreeSansBold.ttf")
+fuente = pygame.font.Font(fontAsBytes, 32)
 texto_x = 10
 texto_y = 10
 
 # Texto final del juego
-fuenteFinal = pygame.font.Font("freesansbold.ttf", 64)
+fuenteFinal = pygame.font.Font(fontAsBytes, 64)
 
 def textoFinal():
     textoFinal = fuenteFinal.render("GAME OVER", True, (255, 255, 255))
